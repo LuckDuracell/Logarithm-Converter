@@ -14,6 +14,7 @@
 		0ABE554A2748DD0300D7D1E2 /* Logarithm_ConverterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABE55492748DD0300D7D1E2 /* Logarithm_ConverterTests.swift */; };
 		0ABE55542748DD0300D7D1E2 /* Logarithm_ConverterUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABE55532748DD0300D7D1E2 /* Logarithm_ConverterUITests.swift */; };
 		0ABE55562748DD0300D7D1E2 /* Logarithm_ConverterUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABE55552748DD0300D7D1E2 /* Logarithm_ConverterUITestsLaunchTests.swift */; };
+		0ABE55642748EB0E00D7D1E2 /* SwiftUICharts in Frameworks */ = {isa = PBXBuildFile; productRef = 0ABE55632748EB0E00D7D1E2 /* SwiftUICharts */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +52,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0ABE55642748EB0E00D7D1E2 /* SwiftUICharts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -143,6 +145,9 @@
 			dependencies = (
 			);
 			name = "Logarithm Converter";
+			packageProductDependencies = (
+				0ABE55632748EB0E00D7D1E2 /* SwiftUICharts */,
+			);
 			productName = "Logarithm Converter";
 			productReference = 0ABE55352748DD0100D7D1E2 /* Logarithm Converter.app */;
 			productType = "com.apple.product-type.application";
@@ -215,6 +220,9 @@
 				Base,
 			);
 			mainGroup = 0ABE552C2748DD0100D7D1E2;
+			packageReferences = (
+				0ABE55622748EB0E00D7D1E2 /* XCRemoteSwiftPackageReference "SwiftUICharts" */,
+			);
 			productRefGroup = 0ABE55362748DD0100D7D1E2 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -605,6 +613,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		0ABE55622748EB0E00D7D1E2 /* XCRemoteSwiftPackageReference "SwiftUICharts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AfrazCodes/SwiftUICharts";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.5.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0ABE55632748EB0E00D7D1E2 /* SwiftUICharts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0ABE55622748EB0E00D7D1E2 /* XCRemoteSwiftPackageReference "SwiftUICharts" */;
+			productName = SwiftUICharts;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 0ABE552D2748DD0100D7D1E2 /* Project object */;
 }
