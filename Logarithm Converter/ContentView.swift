@@ -35,10 +35,11 @@ struct ContentView: View {
             
             Button {
                 calculate = true
-                output = convertToLog(theUserInput: Double(numberInput) ?? 0.0)
-                baseOutput = baseUpdating(theUserInput: Double(numberInput) ?? 0.0)
-                resultOutput = resultUpdating(theUserInput: Double(numberInput) ?? 0.0)
-                reps = repetitionCount(theUserInput: Double(numberInput) ?? 0.0)
+                let data = convertToLog(theUserInput: Double(numberInput) ?? 0.0)
+                output = data.0
+                baseOutput = data.3
+                resultOutput = data.2
+                reps = data.1
                 numberInput = ""
             } label: {
                 Text("Calculate")
@@ -90,105 +91,13 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 
-func convertToLog(theUserInput: Double) -> String {
-    let combined = "0." + "\(theUserInput)"
-    let userInput = (combined as NSString).doubleValue
-    let input: Double = 0 + userInput
-    var base: Double = 2
-    var output: Double = 0
-    var result: Double = 10
-    var growthQuanitity: Double = 100000
-    var greater = 0
-    var lesser = 0
-    var repetitions = 0
-    var addition: Double = 0.2
-    if 0.2 >= userInput { addition = 0 }
-    while "\(output)" != "\(input)" {
-        repetitions += 1
-        let logarithm = log(result)/log(base) + addition
-        if logarithm > Double(input) {
-            base += Double(1*growthQuanitity)
-            greater = 1
-        } else if logarithm < Double(input) {
-            base -= Double(1*growthQuanitity)
-            lesser = 1
-        }
-        if greater == 1 && lesser == 1 {
-            growthQuanitity = growthQuanitity / 1.01
-            greater = 0
-            lesser = 0
-        }
-        if logarithm.distance(to: Double(input)) > 0.1 { result += 1 }
-        //Set Result at End of Each Loop
-        output = logarithm
-        //Kills Loop if Goes on Too Long
-        if repetitions > 3000000 {
-            result = 0
-            base = 0
-            output = input
-        }
-    }
-    var returnValue = "log\(result)/log\(base) + 0.2"
-    if addition == 0 { returnValue = "log\(result)/log\(base)" }
-    return returnValue
-    
-}
-
-func resultUpdating(theUserInput: Double) -> [DataPoint] {
+func convertToLog(theUserInput: Double) -> (String, Int, [DataPoint], [DataPoint]) {
     
     let resultLegned = Legend(color: .teal, label: "Result Values")
-    
-    let combined = "0." + "\(theUserInput)"
-    let userInput = (combined as NSString).doubleValue
-    let input: Double = 0 + userInput
-    var base: Double = 2
-    var output: Double = 0
-    var result: Double = 10
-    var growthQuanitity: Double = 100000
-    var greater = 0
-    var lesser = 0
-    var repetitions = 0
-    var addition: Double = 0.2
-    
-    var resultArray: [DataPoint] = [.init(value: 10, label: "10", legend: resultLegned)]
-    
-    if 0.2 >= userInput { addition = 0 }
-    while "\(output)" != "\(input)" {
-        repetitions += 1
-        let logarithm = log(result)/log(base) + addition
-        if logarithm > Double(input) {
-            base += Double(1*growthQuanitity)
-            greater = 1
-        } else if logarithm < Double(input) {
-            base -= Double(1*growthQuanitity)
-            lesser = 1
-        }
-        if greater == 1 && lesser == 1 {
-            growthQuanitity = growthQuanitity / 1.01
-            greater = 0
-            lesser = 0
-        }
-        if logarithm.distance(to: Double(input)) > 0.1 { result += 1 }
-        //Set Result at End of Each Loop
-        output = logarithm
-        //Kills Loop if Goes on Too Long
-        if repetitions > 3000000 {
-            result = 0
-            base = 0
-            output = input
-        }
-        if (repetitions % 50) == 0 {
-            resultArray.append(.init(value: result, label: "\(repetitions)", legend: resultLegned))
-        }
-    }
-    
-    return resultArray
-    
-}
-
-func baseUpdating(theUserInput: Double) -> [DataPoint] {
-    
     let baseLegend = Legend(color: .green, label: "Base Values")
+    var resultArray: [DataPoint] = [.init(value: 10, label: "1", legend: resultLegned)]
+    var baseArray: [DataPoint] = [.init(value: 2, label: "1", legend: baseLegend)]
+    
     
     let combined = "0." + "\(theUserInput)"
     let userInput = (combined as NSString).doubleValue
@@ -201,9 +110,6 @@ func baseUpdating(theUserInput: Double) -> [DataPoint] {
     var lesser = 0
     var repetitions = 0
     var addition: Double = 0.2
-    
-    var baseArray: [DataPoint] = [.init(value: 2, label: "2", legend: baseLegend)]
-    
     if 0.2 >= userInput { addition = 0 }
     while "\(output)" != "\(input)" {
         repetitions += 1
@@ -216,7 +122,7 @@ func baseUpdating(theUserInput: Double) -> [DataPoint] {
             lesser = 1
         }
         if greater == 1 && lesser == 1 {
-            growthQuanitity = growthQuanitity / 1.01
+            growthQuanitity = growthQuanitity / 2
             greater = 0
             lesser = 0
         }
@@ -229,53 +135,25 @@ func baseUpdating(theUserInput: Double) -> [DataPoint] {
             base = 0
             output = input
         }
-        if (repetitions % 50) == 0 {
-            baseArray.append(.init(value: base, label: "\(repetitions)", legend: baseLegend))
+        
+        resultArray.append(.init(value: result, label: "\(repetitions)", legend: resultLegned))
+        baseArray.append(.init(value: base, label: "\(repetitions)", legend: baseLegend))
+        
+    }
+    
+    if repetitions > 5000 {
+        for _ in 0...5 {
+            resultArray = resultArray.enumerated().compactMap { tuple in
+              tuple.offset.isMultiple(of: 2) ? tuple.element : nil
+            }
+            baseArray = baseArray.enumerated().compactMap { tuple in
+              tuple.offset.isMultiple(of: 2) ? tuple.element : nil
+            }
         }
     }
     
-    return baseArray
+    var returnValue = "log\(result)/log\(base) + 0.2"
+    if addition == 0 { returnValue = "log\(result)/log\(base)" }
+    return (returnValue, repetitions, resultArray, baseArray)
     
-}
-
-func repetitionCount(theUserInput: Double) -> Int {
-    let combined = "0." + "\(theUserInput)"
-    let userInput = (combined as NSString).doubleValue
-    let input: Double = 0 + userInput
-    var base: Double = 2
-    var output: Double = 0
-    var result: Double = 10
-    var growthQuanitity: Double = 100000
-    var greater = 0
-    var lesser = 0
-    var repetitions = 0
-    var addition: Double = 0.2
-    
-    if 0.2 >= userInput { addition = 0 }
-    while "\(output)" != "\(input)" {
-        repetitions += 1
-        let logarithm = log(result)/log(base) + addition
-        if logarithm > Double(input) {
-            base += Double(1*growthQuanitity)
-            greater = 1
-        } else if logarithm < Double(input) {
-            base -= Double(1*growthQuanitity)
-            lesser = 1
-        }
-        if greater == 1 && lesser == 1 {
-            growthQuanitity = growthQuanitity / 1.01
-            greater = 0
-            lesser = 0
-        }
-        if logarithm.distance(to: Double(input)) > 0.1 { result += 1 }
-        //Set Result at End of Each Loop
-        output = logarithm
-        //Kills Loop if Goes on Too Long
-        if repetitions > 3000000 {
-            result = 0
-            base = 0
-            output = input
-        }
-    }
-    return repetitions
 }
