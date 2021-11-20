@@ -68,6 +68,7 @@ struct ContentView: View {
                     .frame(height: 300, alignment: .center)
                     .padding()
                 Text("Repetitions: \(reps)")
+                Text("Data Points: \(resultOutput.count - 1)")
                 
             }
         } .toolbar(content: {
@@ -95,7 +96,7 @@ func convertToLog(theUserInput: Double) -> (String, Int, [DataPoint], [DataPoint
     
     let resultLegned = Legend(color: .teal, label: "Result Values")
     let baseLegend = Legend(color: .green, label: "Base Values")
-    var resultArray: [DataPoint] = [.init(value: 10, label: "1", legend: resultLegned)]
+    var resultArray: [DataPoint] = [.init(value: 2, label: "1", legend: resultLegned)]
     var baseArray: [DataPoint] = [.init(value: 2, label: "1", legend: baseLegend)]
     
     
@@ -104,13 +105,17 @@ func convertToLog(theUserInput: Double) -> (String, Int, [DataPoint], [DataPoint
     let input: Double = 0 + userInput
     var base: Double = 2
     var output: Double = 0
-    var result: Double = 10
-    var growthQuanitity: Double = 100000
+    var result: Double = 2
+    var growthQuanitity: Double = 1000
     var greater = 0
     var lesser = 0
     var repetitions = 0
     var addition: Double = 0.2
-    if 0.2 >= userInput { addition = 0 }
+    
+    var uncompleted = false
+    var recoveredOutput: Double = 0
+    
+    if 0.3 >= userInput { addition = 0 }
     while "\(output)" != "\(input)" {
         repetitions += 1
         let logarithm = log(result)/log(base) + addition
@@ -130,10 +135,10 @@ func convertToLog(theUserInput: Double) -> (String, Int, [DataPoint], [DataPoint
         //Set Result at End of Each Loop
         output = logarithm
         //Kills Loop if Goes on Too Long
-        if repetitions > 3000000 {
-            result = 0
-            base = 0
+        if repetitions > 1000000 {
+            recoveredOutput = output
             output = input
+            uncompleted = true
         }
         
         resultArray.append(.init(value: result, label: "\(repetitions)", legend: resultLegned))
@@ -142,7 +147,11 @@ func convertToLog(theUserInput: Double) -> (String, Int, [DataPoint], [DataPoint
     }
     
     if repetitions > 5000 {
-        for _ in 0...5 {
+        let three: Double = 3
+        var repLog: Double = log(Double(repetitions)) / log(Double(three))
+        repLog.round()
+        let repInt = Int(repLog)
+        for _ in 0...repInt {
             resultArray = resultArray.enumerated().compactMap { tuple in
               tuple.offset.isMultiple(of: 2) ? tuple.element : nil
             }
@@ -154,6 +163,7 @@ func convertToLog(theUserInput: Double) -> (String, Int, [DataPoint], [DataPoint
     
     var returnValue = "log\(result)/log\(base) + 0.2"
     if addition == 0 { returnValue = "log\(result)/log\(base)" }
+    if uncompleted { returnValue = "Error: \(returnValue) = \(recoveredOutput) rather than \(input)" }
     return (returnValue, repetitions, resultArray, baseArray)
     
 }
