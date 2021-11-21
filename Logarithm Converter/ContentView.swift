@@ -131,7 +131,7 @@ func convertToLog(theUserInput: Double) -> (String, Int, [DataPoint], [DataPoint
             greater = 0
             lesser = 0
         }
-        if logarithm.distance(to: Double(input)) > 0.1 { result += 1 }
+        if logarithm.distance(to: Double(input)) > 0.01 { result += 1 }
         //Set Result at End of Each Loop
         output = logarithm
         //Kills Loop if Goes on Too Long
@@ -140,6 +140,9 @@ func convertToLog(theUserInput: Double) -> (String, Int, [DataPoint], [DataPoint
             output = input
             uncompleted = true
         }
+        
+        //If margin of error becomes so small that it will be rounded, then it ends the loop
+        if 0.000000000000001 > abs(output.distance(to: input)) { output = input }
         
         resultArray.append(.init(value: result, label: "\(repetitions)", legend: resultLegned))
         baseArray.append(.init(value: base, label: "\(repetitions)", legend: baseLegend))
